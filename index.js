@@ -27,7 +27,31 @@ client.once("ready", () => {
 
 client.on("message", async message => {
   if (!message.author.bot) {
-    if (message.content.toLowerCase() === prefix + "stats") {
+    if(message.content.toLowerCase() === prefix + "help") {
+      let embed = new MessageEmbed() 
+        .setColor("0x3970b8")
+        .setTitle("MessageTracker")
+        .setDescription("Commands: ")
+        .addField("Stats", "Returns the number of messages you've sent in a pretty embed.")
+        .addField("Leaderboard", "A global leaderboard to show the top chatters!")
+        .setThumbnail(client.user.displayAvatarURL())
+        .setFooter(client.user.username, client.user.displayAvatarURL())
+      message.author.send(embed);
+    } else if(!message.content.startsWith(prefix)) {
+      if(message.mentions.members.username === client.user.username) {
+        let embed = new MessageEmbed() 
+        .setColor("0x3970b8")
+        .setTitle("MessageTracker")
+        .setDescription("Commands: ")
+        .addField("Stats", "Returns the number of messages you've sent in a pretty embed.")
+        .addField("Leaderboard", "A global leaderboard to show the top chatters!")
+        .setThumbnail(client.user.displayAvatarURL())
+        .setFooter(client.user.username, client.user.displayAvatarURL())
+      message.author.send(embed);
+      }
+    }
+
+    else if (message.content.toLowerCase() === prefix + "stats") {
       MessageData.findOne(
         {
           userID: message.author.id,
@@ -39,7 +63,7 @@ client.on("message", async message => {
             const newTracker = new MessageData({
               userID: message.author.id,
               username: message.author.username,
-              messageCount: 0
+              messageCount: 1
             });
             newTracker.save().catch(err => console.error(err));
             message.channel.send("`ERROR: You haven't sent a message yet.`");
@@ -155,7 +179,7 @@ client.on("message", async message => {
           const newTracker = new MessageData({
             userID: message.author.id,
             username: message.author.username,
-            messageCount: 0
+            messageCount: 1
           });
           newTracker.save().catch(err => console.error(err));
         } else {
