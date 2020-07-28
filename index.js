@@ -23,6 +23,8 @@ mongoose.connection.on("connected", () => {
 
 client.once("ready", () => {
   console.log("Ready to track!");
+  client.user.setPresence({ activity: { name: prefix + "help" }, status: 'idle' })
+  .catch(err => console.log(err));
 });
 
 client.on("message", async message => {
@@ -49,9 +51,7 @@ client.on("message", async message => {
         .setFooter(client.user.username, client.user.displayAvatarURL())
       message.author.send(embed);
       }
-    }
-
-    else if (message.content.toLowerCase() === prefix + "stats") {
+    } else if (message.content.toLowerCase() === prefix + "stats") {
       MessageData.findOne(
         {
           userID: message.author.id,
