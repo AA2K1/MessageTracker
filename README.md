@@ -11,11 +11,12 @@ press of the return key you make.
 
 - Message Tracking
 - Global Leaderboard
+- Word Tracking 
+- Word Leaderboards
 
 ## Commands
 
-- Leaderboards with +leaderboard
-- Stats on how many messages you've sent with +stats
+Use +help to see a list of commands you can use! 
 
 ## License
 
