@@ -57,7 +57,7 @@ client.on("message", async message => {
           for (const [key, value] of counter.entries()) {
             if(words.wordCount.has(key)) {
               words.wordCount.set(key, words.wordCount.get(key) + value);
-            } else {
+            } else if(!words.wordCount.has(key) && !key.includes(".")) {
               words.wordCount.set(key, 1);
             }
           } 
@@ -67,104 +67,6 @@ client.on("message", async message => {
         }
       }
     });
-    if(message.content.toLowerCase().includes(prefix + "wordlb")) {
-      //Access thing
-      let wordToFind = words[1];
-      let sortParams = {'wordCount' : 'desc'};
-      if(wordToFind == null) {
-        return message.channel.send("`ERROR: There is no argument for what word you want to see.`").then(msg => msg.delete({timeout: 15000}))
-      } else {
-        try {
-          console.log(wordToFind);
-          console.log(words);
-          WordData.find({})
-          .sort(sortParams)
-          .exec((err, res) => {
-            if (err) console.log(err);
-
-            let embed = new MessageEmbed()
-              .setTitle(`Who said ${wordToFind} the most?`)
-              .setFooter(client.user.username, client.user.displayAvatarURL());
-            if (res.length === 0) {
-              embed.setColor(0xe84d4d);
-              embed.setDescription("`ERROR: No data to work off of...`");
-            } else if (res.length < 5) {
-              embed.setColor(0x3970b8);
-              for (let i = 0; i < res.length; i++) {
-                // console.log(res[i].wordCount.get(wordToFind.toString()));
-                let member =
-                  WordData.findOne({ userID: res[i].userID }) || "???";
-                if (member == "???") {
-                  embed.addField(
-                    `${i + 1}. ${member}`,
-                    `**Count:** ${res[i].wordCount.get(wordToFind.toString())}`
-                  );
-                } else if(res[i].wordCount.get(wordToFind) !== undefined) {
-                  if (i + 1 == 1) {
-                    embed.addField(
-                      `🥇: **${res[i].username}**`,
-                      `**Count: ${res[i].wordCount.get(wordToFind.toString())}**`
-                    );
-                  } else if (i + 1 == 2) {
-                    embed.addField(
-                      `🥈: **${res[i].username}**`,
-                      `  **Count: ${res[i].wordCount.get(wordToFind.toString())}**`
-                    );
-                  } else if (i + 1 == 3) {
-                    embed.addField(
-                      `🥉: **${res[i].username}**`,
-                      `  **Count: ${res[i].wordCount.get(wordToFind.toString())}**`
-                    );
-                  } else {
-                    embed.addField(
-                      `🏅: **${res[i].username}**`,
-                      `  **Count: ${res[i].wordCount.get(wordToFind.toString())}**`
-                    );
-                  }
-                }
-              }
-            } else {
-              embed.setColor(0x3970b8);
-              for (let i = 0; i < 5; i++) {
-                // console.log(res[i].wordCount.get(wordToFind.toString()));
-                let member =
-                  MessageData.findOne({ userID: res[i].userID }) || "???";
-                if (member == "???") {
-                  embed.addField(
-                    `${i + 1}. ${member}`,
-                    `**Count:** ${res[i].wordCount.get(wordToFind.toString())}`
-                  );
-                } else if(res[i].wordCount.get(wordToFind) !== undefined) {
-                  if (i + 1 == 1) {
-                    embed.addField(
-                      `🥇: **${res[i].username}**`,
-                      `  **Count: ${res[i].wordCount.get(wordToFind.toString())}**`
-                    );
-                  } else if (i + 1 == 2) {
-                    embed.addField(
-                      `🥈: **${res[i].username}**`,
-                      `  **Count: ${res[i].wordCount.get(wordToFind.toString())}**`
-                    );
-                  } else if (i + 1 == 3) {
-                    embed.addField(
-                      `🥉: **${res[i].username}**`,
-                      `  **Count: ${res[i].wordCount.get(wordToFind.toString())}**`
-                    );
-                  } else {
-                    embed.addField(
-                      `🏅: **${res[i].username}**`,
-                      `  **Count: ${res[i].wordCount.get(wordToFind.toString())}**`
-                    );
-                  }
-                }
-              }
-            }
-            message.channel.send(embed).then(msg => msg.delete({timeout: 15000}));
-          });
-        } catch(err) {
-          console.log(err);
-        }
-      }
     } else if(message.content.toLowerCase().includes(prefix + "wordstats") || message.content.toLowerCase().includes(prefix + "wordcount")) {
       let wordToFind = words[1];
       WordData.findOne(
@@ -206,7 +108,6 @@ client.on("message", async message => {
         .addField("msgstats", "Returns the number of messages you've sent in a pretty embed. Usage is: **+msgstats** or **+msgcount**.")
         .addField("msglb", "A global leaderboard to show the top chatters! Usage is **+msglb** or **+messagelb**.")
         .addField("wordstats", "Shows how many times you've said a given word. Usage is **+wordstats [word]** or **+wordcount [word]**.")
-        .addField("wordlb", "A global leaderboard showing how many times you've said a given word! Usage is **+wordlb [word]**.")
         .setThumbnail(client.user.displayAvatarURL())
         .setFooter(client.user.username, client.user.displayAvatarURL())
       message.author.send(embed);
